@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Викторина по формулам физики</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: Arial, sans-serif;
+            }
+
+            body {
+                background-color: #f0f0f0;
+                padding: 20px;
+                line-height: 1.5;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                background-color: white;
+                border-radius: 10px;
+                padding: 20px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            header {
+                text-align: center;
+                margin-bottom: 25px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid #4a6fa5;
+            }
+
+            h1 {
+                color: #2c3e50;
+                margin-bottom: 10px;
+            }
+
+            .subtitle {
+                color: #666;
+            }
+
+            .class-selector {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 25px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .class-btn {
+                padding: 10px 20px;
+                background-color: #4a6fa5;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+
+            .class-btn:hover {
+                background-color: #3a5a8a;
+            }
+
+            .class-btn.active {
+                background-color: #2c3e50;
+            }
+
+            .quiz-info {
+                text-align: center;
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #f8f9fa;
+                border-radius: 5px;
+            }
+
+            .class-title {
+                font-size: 20px;
+                color: #2c3e50;
+                margin-bottom: 5px;
+            }
+
+            .question-counter {
+                color: #666;
+            }
+
+            .question-container {
+                margin-bottom: 25px;
+                padding: 20px;
+                background-color: #f8f9fa;
+                border-radius: 5px;
+                border-left: 4px solid #4a6fa5;
+                display: none;
+            }
+
+            .question-container.active {
+                display: block;
+            }
+
+            .question-number {
+                color: #4a6fa5;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            .question-text {
+                font-size: 18px;
+                margin-bottom: 20px;
+            }
+
+            .options-container {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .option {
+                padding: 12px 15px;
+                background-color: white;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .option:hover {
+                background-color: #f0f7ff;
+            }
+
+            .option.selected {
+                border-color: #4a6fa5;
+                background-color: #e8f0ff;
+            }
+
+            .option.correct {
+                border-color: #28a745;
+                background-color: #d4edda;
+            }
+
+            .option.incorrect {
+                border-color: #dc3545;
+                background-color: #f8d7da;
+            }
+
+            .navigation {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid #ddd;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                background-color: #4a6fa5;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+
+            .btn:hover:not(:disabled) {
+                background-color: #3a5a8a;
+            }
+
+            .btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .btn-check {
+                background-color: #ff9800;
+            }
+
+            .btn-check:hover:not(:disabled) {
+                background-color: #e68900;
+            }
+
+            .btn-next {
+                background-color: #28a745;
+            }
+
+            .btn-next:hover:not(:disabled) {
+                background-color: #218838;
+            }
+
+            .result-container {
+                text-align: center;
+                padding: 30px;
+                display: none;
+            }
+
+            .result-container.active {
+                display: block;
+            }
+
+            .result-title {
+                color: #2c3e50;
+                margin-bottom: 20px;
+            }
+
+            .score {
+                font-size: 48px;
+                font-weight: bold;
+                color: #28a745;
+                margin: 15px 0;
+            }
+
+            .score-text {
+                color: #666;
+                margin-bottom: 25px;
+            }
+
+            .restart-btn {
+                padding: 12px 30px;
+                background-color: #4a6fa5;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+
+            .restart-btn:hover {
+                background-color: #3a5a8a;
+            }
+
+            .explanation {
+                margin-top: 20px;
+                padding: 15px;
+                background-color: #e8f0ff;
+                border-radius: 5px;
+                border-left: 3px solid #4a6fa5;
+                display: none;
+            }
+
+            .explanation.show {
+                display: block;
+            }
+
+            .explanation-title {
+                font-weight: bold;
+                color: #2c3e50;
+                margin-bottom: 8px;
+            }
+
+            footer {
+                text-align: center;
+                margin-top: 25px;
+                color: #666;
+                font-size: 14px;
+                padding-top: 15px;
+                border-top: 1px solid #ddd;
+            }
+
+            .progress-bar {
+                height: 6px;
+                background-color: #e0e0e0;
+                border-radius: 3px;
+                margin-top: 10px;
+                overflow: hidden;
+            }
+
+            .progress {
+                height: 100%;
+                background-color: #28a745;
+                width: 0%;
+                transition: width 0.3s;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>Викторина по формулам физики</h1>
+                <p class="subtitle">7-9 классы</p>
+            </header>
+
+            <div class="class-selector">
+                <button class="class-btn active" data-class="7">7 Класс</button>
+                <button class="class-btn" data-class="8">8 Класс</button>
+                <button class="class-btn" data-class="9">9 Класс</button>
+            </div>
+
+            <div class="quiz-info">
+                <h2 class="class-title" id="class-title">7 Класс</h2>
+                <div class="question-counter">
+                    Вопрос <span id="current-question">1</span> из <span id="total-questions">10</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+            </div>
+
+            <div id="question-container"></div>
+
+            <div class="navigation">
+                <button class="btn" id="prev-btn" disabled>Назад</button>
+                <button class="btn btn-check" id="check-btn">Проверить</button>
+                <button class="btn btn-next" id="next-btn" disabled>Далее</button>
+            </div>
+
+            <div class="result-container" id="result-container">
+                <h2 class="result-title">Викторина завершена!</h2>
+                <div class="score" id="final-score">0/10</div>
+                <p class="score-text" id="score-text">Вы ответили правильно на 0 из 10 вопросов</p>
+                <button class="restart-btn" id="restart-btn">Начать заново</button>
+            </div>
+
+            <footer>
+                <p>Викторина по формулам физики для 7-9 классов</p>
+            </footer>
+        </div>
+
+        <script>
+            const quizData = {
+                7: [
+                    {
+                        question: "По какой формуле вычисляют плотность вещества?",
+                        options: [
+                            { text: "m = ρ * V", correct: false },
+                            { text: "ρ = m / V", correct: true },
+                            { text: "ρ = V / m", correct: false },
+                            { text: "V = m / ρ", correct: false }
+                        ],
+                        explanation: "Плотность вещества вычисляется как масса, деленная на объем: ρ = m / V"
+                    },
+                    {
+                        question: "Как найти скорость равномерного прямолинейного движения?",
+                        options: [
+                            { text: "v = t / s", correct: false },
+                            { text: "v = s * t", correct: false },
+                            { text: "v = s / t", correct: true },
+                            { text: "s = v * t", correct: false }
+                        ],
+                        explanation:
+                            "Скорость при равномерном прямолинейном движении равна пути, деленному на время: v = s / t"
+                    },
+                    {
+                        question: "Какая формула выражает закон Гука (силу упругости)?",
+                        options: [
+                            { text: "F = m * g", correct: false },
+                            { text: "F = k * Δl", correct: true },
+                            { text: "F = ρ * g * V", correct: false },
+                            { text: "F = μ * N", correct: false }
+                        ],
+                        explanation: "Сила упругости (закон Гука) прямо пропорциональна удлинению: F = k * Δl"
+                    },
+                    {
+                        question: "По какой формуле вычисляют давление жидкости на дно и стенки сосуда?",
+                        options: [
+                            { text: "p = F / S", correct: false },
+                            { text: "p = ρ * g", correct: false },
+                            { text: "p = ρ * g * h", correct: true },
+                            { text: "p = m / V", correct: false }
+                        ],
+                        explanation: "Давление жидкости на дно и стенки сосуда: p = ρ * g * h"
+                    },
+                    {
+                        question: "Как найти силу тяжести, действующую на тело?",
+                        options: [
+                            { text: "Fтяж = m * g", correct: true },
+                            { text: "Fтяж = ρ * g * V", correct: false },
+                            { text: "Fтяж = k * x", correct: false },
+                            { text: "Fтяж = v * t", correct: false }
+                        ],
+                        explanation: "Сила тяжести: Fтяж = m * g"
+                    },
+                    {
+                        question: "Какова формула для вычисления давления (общая)?",
+                        options: [
+                            { text: "p = m / V", correct: false },
+                            { text: "p = F / S", correct: true },
+                            { text: "p = ρ * g * h", correct: false },
+                            { text: "p = N / S", correct: false }
+                        ],
+                        explanation: "Общая формула давления: p = F / S"
+                    },
+                    {
+                        question: "Как вычислить архимедову силу (силу выталкивания)?",
+                        options: [
+                            { text: "Fарх = m * g", correct: false },
+                            { text: "Fарх = ρж * g", correct: false },
+                            { text: "Fарх = ρж * g * Vт", correct: true },
+                            { text: "Fарх = Pв - Pж", correct: false }
+                        ],
+                        explanation: "Архимедова сила: Fарх = ρж * g * Vт"
+                    },
+                    {
+                        question: "Как найти механическую работу?",
+                        options: [
+                            { text: "A = N * t", correct: false },
+                            { text: "A = F / S", correct: false },
+                            { text: "A = F * S", correct: true },
+                            { text: "A = m * g * h", correct: false }
+                        ],
+                        explanation: "Механическая работа: A = F * S"
+                    },
+                    {
+                        question: "Какова формула для мощности?",
+                        options: [
+                            { text: "N = A * t", correct: false },
+                            { text: "N = F / v", correct: false },
+                            { text: "N = A / t", correct: true },
+                            { text: "N = m * v", correct: false }
+                        ],
+                        explanation: "Мощность: N = A / t"
+                    },
+                    {
+                        question: "Как вычислить путь при равномерном движении?",
+                        options: [
+                            { text: "s = v * t", correct: true },
+                            { text: "s = v / t", correct: false },
+                            { text: "s = a * t² / 2", correct: false },
+                            { text: "s = F / A", correct: false }
+                        ],
+                        explanation: "Путь при равномерном движении: s = v * t"
+                    }
+                ],
+                8: [
+                    {
+                        question: "Как записывается закон Ома для участка цепи?",
+                        options: [
+                            { text: "I = U * R", correct: false },
+                            { text: "R = I / U", correct: false },
+                            { text: "I = U / R", correct: true },
+                            { text: "U = I / R", correct: false }
+                        ],
+                        explanation: "Закон Ома: I = U / R"
+                    },
+                    {
+                        question: "По какой формуле вычисляется количество теплоты, необходимое для нагревания тела?",
+                        options: [
+                            { text: "Q = λ * m", correct: false },
+                            { text: "Q = c * m", correct: false },
+                            { text: "Q = L * m", correct: false },
+                            { text: "Q = c * m * (t2 - t1)", correct: true }
+                        ],
+                        explanation: "Количество теплоты для нагревания: Q = c * m * (t2 - t1)"
+                    },
+                    {
+                        question: "Как найти общее сопротивление двух последовательно соединённых резисторов?",
+                        options: [
+                            { text: "R = R1 * R2 / (R1 + R2)", correct: false },
+                            { text: "R = R1 + R2", correct: true },
+                            { text: "R = (R1 + R2) / 2", correct: false },
+                            { text: "R = 1/R1 + 1/R2", correct: false }
+                        ],
+                        explanation: "Общее сопротивление при последовательном соединении: R = R1 + R2"
+                    },
+                    {
+                        question: "Какова формула для расчёта работы электрического тока?",
+                        options: [
+                            { text: "A = I * U", correct: false },
+                            { text: "A = I² * R * t", correct: false },
+                            { text: "A = U² / R * t", correct: false },
+                            { text: "Все перечисленные верны", correct: true }
+                        ],
+                        explanation:
+                            "Работа тока может быть вычислена по разным формулам: A = I * U * t, A = I² * R * t, A = U² / R * t"
+                    },
+                    {
+                        question: "По какой формуле вычисляется мощность электрического тока?",
+                        options: [
+                            { text: "P = A * t", correct: false },
+                            { text: "P = I / U", correct: false },
+                            { text: "P = I * U", correct: true },
+                            { text: "P = U / I", correct: false }
+                        ],
+                        explanation: "Мощность электрического тока: P = I * U"
+                    },
+                    {
+                        question: "Как записывается формула КПД теплового двигателя?",
+                        options: [
+                            { text: "η = (Qнагр / Qсожж) * 100%", correct: false },
+                            { text: "η = (Aполезн / Qзатр) * 100%", correct: true },
+                            { text: "η = (Qзатр / Aполезн) * 100%", correct: false },
+                            { text: "η = (Qсожж - Qхол) / 2", correct: false }
+                        ],
+                        explanation: "КПД теплового двигателя: η = (Aполезн / Qзатр) * 100%"
+                    },
+                    {
+                        question: "Как найти общее сопротивление двух параллельно соединённых резисторов?",
+                        options: [
+                            { text: "1/R = 1/R1 + 1/R2", correct: true },
+                            { text: "R = R1 + R2", correct: false },
+                            { text: "R = R1 * R2", correct: false },
+                            { text: "R = (R1 + R2) / (R1 * R2)", correct: false }
+                        ],
+                        explanation: "Общее сопротивление при параллельном соединении: 1/R = 1/R1 + 1/R2"
+                    },
+                    {
+                        question: "Какая формула определяет количество теплоты, выделяемое проводником с током?",
+                        options: [
+                            { text: "Q = I * U * t", correct: false },
+                            { text: "Q = I² * R * t", correct: true },
+                            { text: "Q = U * t / R", correct: false },
+                            { text: "Q = P * t", correct: false }
+                        ],
+                        explanation: "Закон Джоуля-Ленца: Q = I² * R * t"
+                    },
+                    {
+                        question: "Как вычислить количество теплоты, выделяющееся при сгорании топлива?",
+                        options: [
+                            { text: "Q = c * m * Δt", correct: false },
+                            { text: "Q = q * m", correct: true },
+                            { text: "Q = λ * m", correct: false },
+                            { text: "Q = L * m", correct: false }
+                        ],
+                        explanation: "Количество теплоты при сгорании топлива: Q = q * m"
+                    },
+                    {
+                        question: "Какова формула для расчёта заряда, прошедшего через проводник?",
+                        options: [
+                            { text: "q = I * t", correct: true },
+                            { text: "q = I / t", correct: false },
+                            { text: "q = U * R", correct: false },
+                            { text: "q = A / U", correct: false }
+                        ],
+                        explanation: "Заряд, прошедший через проводник: q = I * t"
+                    }
+                ],
+                9: [
+                    {
+                        question: "Как записывается второй закон Ньютона?",
+                        options: [
+                            { text: "F = m * a", correct: true },
+                            { text: "F = m * g", correct: false },
+                            { text: "F = k * x", correct: false },
+                            { text: "F = G * (m₁*m₂)/r²", correct: false }
+                        ],
+                        explanation: "Второй закон Ньютона: F = m * a"
+                    },
+                    {
+                        question: "По какой формуле вычисляется центростремительное ускорение?",
+                        options: [
+                            { text: "a = v² / r", correct: true },
+                            { text: "a = ω * r", correct: false },
+                            { text: "a = Δv / t", correct: false },
+                            { text: "a = 2πr / T", correct: false }
+                        ],
+                        explanation: "Центростремительное ускорение: a = v² / r"
+                    },
+                    {
+                        question: "Как находится импульс тела?",
+                        options: [
+                            { text: "p = F * t", correct: false },
+                            { text: "p = m * v", correct: true },
+                            { text: "p = m * a", correct: false },
+                            { text: "p = Eк / v", correct: false }
+                        ],
+                        explanation: "Импульс тела: p = m * v"
+                    },
+                    {
+                        question: "Как записывается закон всемирного тяготения?",
+                        options: [
+                            { text: "F = m * g", correct: false },
+                            { text: "F = (G * m₁ * m₂) / r", correct: false },
+                            { text: "F = (G * m₁ * m₂) / r²", correct: true },
+                            { text: "F = k * (q₁ * q₂) / r²", correct: false }
+                        ],
+                        explanation: "Закон всемирного тяготения: F = (G * m₁ * m₂) / r²"
+                    },
+                    {
+                        question: "Как вычислить период колебаний математического маятника?",
+                        options: [
+                            { text: "T = 2π * √(l/g)", correct: true },
+                            { text: "T = 2π * √(g/l)", correct: false },
+                            { text: "T = 2π * √(m/k)", correct: false },
+                            { text: "T = 1 / ν", correct: false }
+                        ],
+                        explanation: "Период колебаний математического маятника: T = 2π * √(l/g)"
+                    },
+                    {
+                        question: "По какой формуле определяется кинетическая энергия тела?",
+                        options: [
+                            { text: "Eк = m * v", correct: false },
+                            { text: "Eк = (m * v²) / 2", correct: true },
+                            { text: "Eк = m * g * h", correct: false },
+                            { text: "Eк = F * s", correct: false }
+                        ],
+                        explanation: "Кинетическая энергия: Eк = (m * v²) / 2"
+                    },
+                    {
+                        question: "Как найти потенциальную энергию тела, поднятого над Землёй?",
+                        options: [
+                            { text: "Eп = m * v² / 2", correct: false },
+                            { text: "Eп = k * x² / 2", correct: false },
+                            { text: "Eп = m * g * h", correct: true },
+                            { text: "Eп = Fтяж / h", correct: false }
+                        ],
+                        explanation: "Потенциальная энергия: Eп = m * g * h"
+                    },
+                    {
+                        question: "Как записывается закон сохранения импульса для двух тел?",
+                        options: [
+                            { text: "m₁v₁ + m₂v₂ = 0", correct: false },
+                            { text: "m₁v₁ = m₂v₂", correct: false },
+                            { text: "m₁v₁ + m₂v₂ = m₁u₁ + m₂u₂", correct: true },
+                            { text: "p₁ - p₂ = const", correct: false }
+                        ],
+                        explanation: "Закон сохранения импульса: m₁v₁ + m₂v₂ = m₁u₁ + m₂u₂"
+                    },
+                    {
+                        question: "Как связаны период и частота колебаний?",
+                        options: [
+                            { text: "ν = T / 2π", correct: false },
+                            { text: "T = π / ν", correct: false },
+                            { text: "T * ν = 1", correct: true },
+                            { text: "ν = 2π / T", correct: false }
+                        ],
+                        explanation: "Период и частота: T * ν = 1"
+                    },
+                    {
+                        question: "Какова формула для расчёта работы силы? (В общем виде)",
+                        options: [
+                            { text: "A = F / s", correct: false },
+                            { text: "A = F * s", correct: true },
+                            { text: "A = F * v", correct: false },
+                            { text: "A = m * g * h", correct: false }
+                        ],
+                        explanation: "Работа силы: A = F * s"
+                    }
+                ]
+            };
+
+            let currentClass = 7;
+            let currentQuestionIndex = 0;
+            let score = 0;
+            let userAnswers = [];
+            let quizCompleted = false;
+
+            const classButtons = document.querySelectorAll(".class-btn");
+            const classTitle = document.getElementById("class-title");
+            const currentQuestionElement = document.getElementById("current-question");
+            const totalQuestionsElement = document.getElementById("total-questions");
+            const progressBar = document.getElementById("progress-bar");
+            const questionContainer = document.getElementById("question-container");
+            const prevBtn = document.getElementById("prev-btn");
+            const checkBtn = document.getElementById("check-btn");
+            const nextBtn = document.getElementById("next-btn");
+            const resultContainer = document.getElementById("result-container");
+            const finalScoreElement = document.getElementById("final-score");
+            const scoreTextElement = document.getElementById("score-text");
+            const restartBtn = document.getElementById("restart-btn");
+
+            function initQuiz() {
+                currentQuestionIndex = 0;
+                score = 0;
+                userAnswers = Array(quizData[currentClass].length).fill(null);
+                quizCompleted = false;
+
+                classTitle.textContent = `${currentClass} Класс`;
+                totalQuestionsElement.textContent = quizData[currentClass].length;
+
+                showQuestion();
+                updateNavigation();
+                hideResult();
+
+                classButtons.forEach((btn) => {
+                    if (parseInt(btn.dataset.class) === currentClass) {
+                        btn.classList.add("active");
+                    } else {
+                        btn.classList.remove("active");
+                    }
+                });
+            }
+
+            function showQuestion() {
+                const questionData = quizData[currentClass][currentQuestionIndex];
+
+                currentQuestionElement.textContent = currentQuestionIndex + 1;
+
+                progressBar.style.width = `${(currentQuestionIndex / quizData[currentClass].length) * 100}%`;
+
+                let questionHTML = `
+                <div class="question-container active">
+                    <div class="question-number">Вопрос ${currentQuestionIndex + 1}</div>
+                    <div class="question-text">${questionData.question}</div>
+                    <div class="options-container">
+            `;
+
+                questionData.options.forEach((option, index) => {
+                    let optionClass = "option";
+                    if (userAnswers[currentQuestionIndex] === index) {
+                        optionClass += " selected";
+                    }
+
+                    questionHTML += `
+                    <div class="${optionClass}" data-index="${index}">
+                        ${option.text}
+                    </div>
+                `;
+                });
+
+                questionHTML += `
+                    </div>
+                    <div class="explanation">
+                        <div class="explanation-title">Объяснение:</div>
+                        <p>${questionData.explanation}</p>
+                    </div>
+                </div>
+            `;
+
+                questionContainer.innerHTML = questionHTML;
+
+                document.querySelectorAll(".option").forEach((option) => {
+                    option.addEventListener("click", () => {
+                        if (quizCompleted) return;
+
+                        document.querySelectorAll(".option").forEach((opt) => {
+                            opt.classList.remove("selected");
+                        });
+
+                        option.classList.add("selected");
+
+                        const selectedIndex = parseInt(option.dataset.index);
+                        userAnswers[currentQuestionIndex] = selectedIndex;
+
+                        checkBtn.disabled = false;
+                    });
+                });
+            }
+
+            function checkAnswer() {
+                const questionData = quizData[currentClass][currentQuestionIndex];
+                const userAnswerIndex = userAnswers[currentQuestionIndex];
+
+                if (userAnswerIndex === null) return;
+
+                const options = document.querySelectorAll(".option");
+                const explanation = document.querySelector(".explanation");
+
+                const isCorrect = questionData.options[userAnswerIndex].correct;
+
+                options.forEach((option, index) => {
+                    if (questionData.options[index].correct) {
+                        option.classList.add("correct");
+                    } else if (index === userAnswerIndex && !isCorrect) {
+                        option.classList.add("incorrect");
+                    }
+
+                    option.style.pointerEvents = "none";
+                });
+
+                explanation.classList.add("show");
+
+                if (isCorrect) {
+                    score++;
+                }
+
+                updateNavigation();
+
+                checkBtn.disabled = true;
+            }
+
+            function updateNavigation() {
+
+                prevBtn.disabled = currentQuestionIndex === 0;
+
+                const hasAnswer = userAnswers[currentQuestionIndex] !== null;
+                const isLastQuestion = currentQuestionIndex === quizData[currentClass].length - 1;
+
+                if (isLastQuestion) {
+                    nextBtn.textContent = "Завершить";
+                } else {
+                    nextBtn.textContent = "Далее";
+                }
+
+                nextBtn.disabled = !hasAnswer;
+            }
+
+            function nextQuestion() {
+                const isLastQuestion = currentQuestionIndex === quizData[currentClass].length - 1;
+
+                if (isLastQuestion) {
+
+                    completeQuiz();
+                } else {
+                    currentQuestionIndex++;
+                    showQuestion();
+                    updateNavigation();
+
+                    checkBtn.disabled = true;
+                }
+            }
+
+            function prevQuestion() {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    showQuestion();
+                    updateNavigation();
+
+                    checkBtn.disabled = userAnswers[currentQuestionIndex] === null;
+                }
+            }
+
+            function completeQuiz() {
+                quizCompleted = true;
+
+                document.querySelector(".question-container").style.display = "none";
+                document.querySelector(".navigation").style.display = "none";
+
+                showResult();
+            }
+
+            function showResult() {
+                progressBar.style.width = "100%";
+
+                finalScoreElement.textContent = `${score}/${quizData[currentClass].length}`;
+
+                let scoreText = "";
+                const percentage = (score / quizData[currentClass].length) * 100;
+
+                if (percentage === 100) {
+                    scoreText = "Отлично! Вы отлично знаете формулы по физике!";
+                } else if (percentage >= 70) {
+                    scoreText = "Хорошо! Вы хорошо знаете формулы по физике.";
+                } else if (percentage >= 50) {
+                    scoreText = "Удовлетворительно. Вам стоит повторить формулы.";
+                } else {
+                    scoreText = "Попробуйте еще раз. Обратите внимание на формулы, которые вызвали затруднения.";
+                }
+
+                scoreTextElement.textContent = `Вы ответили правильно на ${score} из ${quizData[currentClass].length} вопросов. ${scoreText}`;
+
+                resultContainer.classList.add("active");
+            }
+
+            function hideResult() {
+                resultContainer.classList.remove("active");
+                document.querySelector(".navigation").style.display = "flex";
+            }
+
+            function restartQuiz() {
+                initQuiz();
+            }
+
+            classButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    currentClass = parseInt(button.dataset.class);
+                    initQuiz();
+                });
+            });
+
+            prevBtn.addEventListener("click", prevQuestion);
+            checkBtn.addEventListener("click", checkAnswer);
+            nextBtn.addEventListener("click", nextQuestion);
+            restartBtn.addEventListener("click", restartQuiz);
+
+            document.addEventListener("DOMContentLoaded", initQuiz);
+        </script>
+    </body>
+</html>
